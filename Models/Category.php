@@ -7,9 +7,6 @@ use DB;
 
 class Category extends Model
 {
-    public $timestamps = false;
-    protected $fillable = ['category', 'view', 'description'];
-
 	public function projects()
 	{
 		return $this->hasMany('App\Models\Project', 'category_id', 'id');
@@ -25,4 +22,7 @@ class Category extends Model
 		
 		return $categories;
 	}
+	public $timestamps = false;
+	protected $fillable = ['category' , 'description', 'view'];
+
 }

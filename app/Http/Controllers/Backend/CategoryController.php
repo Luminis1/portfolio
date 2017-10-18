@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use App\Models\Category;
 use App;
 use File;
 
-class ProjectsController extends Controller
+
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +18,14 @@ class ProjectsController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $categories = Category::all();
+//        dd($categories);
 
-        return view('dashboard.project', [
-            'projects' => $projects
-        ]);
+       return view('dashboard.category',
+           [
+               'category' => $categories
+
+           ]);
     }
 
     /**
@@ -33,7 +36,7 @@ class ProjectsController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('project.create',
+        return view('category.create',
             [
                 'categories' => $categories,
             ]);
@@ -46,27 +49,25 @@ class ProjectsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {
         $data = $request->all();
+
         $this->validate($request, [
-            'name' => 'required|max:60',
-            'client' => 'required|max:60',
+            'category' => 'required|max:60',
             'description' => 'required',
-            'preview' => 'required|mimes:jpeg,png|max:15000'
+            'view' => 'required|mimes:jpeg,png|max:15000'
         ]);
-        
-        $file = $request->file('preview');
+
+        $file = $request->file('view');
         $path = public_path('img/portfolio');
         $filename = $file->hashName();
-        
+
         $file->move($path, $filename);
-        
+
         $data['preview'] = $filename;
-        
-        Project::create($data);
-        
-        return redirect('/dashboard/projects');
-        
+        Category::create($data);
+
+        return redirect('/dashboard/category');
     }
 
     /**
@@ -88,12 +89,10 @@ class ProjectsController extends Controller
      */
     public function edit($id)
     {
-        $categories = Category::all();
-        $project = Project::find($id);
-        return view('project.edit', [
-            'project' => $project,
-            'categories' => $categories
+        $categories = Category::find($id);
 
+        return view('category.edit', [
+           'category' => $categories
         ]);
     }
 
@@ -107,41 +106,41 @@ class ProjectsController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-		
+
         $this->validate($request, [
-            'name' => 'required|max:60',
-            'client' => 'required|max:60',
+            'category' => 'required|max:60',
             'description' => 'required'
         ]);
-        
-        $file = $request->file('preview');
-		
-		$project = Project::find($id);
-		
-		if(!empty($file)){
-			$this->validate($request, [
-				'preview' => 'required|mimes:jpeg,png|max:15000'
-			]);
-			
-			$path = public_path('img/portfolio/');
-			$filename = $file->hashName();
-			
-			$oldfile = $path . $project->preview;
-		
-			if(File::isFile($oldfile)){
-				File::delete($oldfile);
-			}
-			
-			$file->move($path, $filename);
 
-			$data['preview'] = $filename;
-		}
-		
-        
-        $project->update($data);
-        
-        return redirect('/dashboard/projects');
+        $file = $request->file('preview');
+
+        $category = Category::find($id);
+
+        if(!empty($file)){
+            $this->validate($request, [
+                'preview' => 'required|mimes:jpeg,png|max:15000'
+            ]);
+
+            $path = public_path('img/portfolio/');
+            $filename = $file->hashName();
+
+            $oldfile = $path . $category->preview;
+
+            if(File::isFile($oldfile)){
+                File::delete($oldfile);
+            }
+
+            $file->move($path, $filename);
+
+            $data['preview'] = $filename;
+        }
+
+
+        $category->update($data);
+
+        return redirect('/dashboard/category');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -151,18 +150,18 @@ class ProjectsController extends Controller
      */
     public function destroy($id)
     {
-		$path = public_path('img/portfolio/');
-		
-        $project = Project::find($id);
-		
-		$file = $path . $project->preview;
-		
-		if(File::isFile($file)){
-			File::delete($file);
-		}
-		
-        $project->delete();
-        
-        return redirect('/dashboard/projects');
+        $path = public_path('img/portfolio/');
+
+        $cathegory = Category::find($id);
+
+        $file = $path . $cathegory->preview;
+
+        if(File::isFile($file)){
+            File::delete($file);
+        }
+
+        $cathegory->delete();
+
+        return redirect('/dashboard/category');
     }
 }

@@ -13,6 +13,7 @@ class DefaultController extends Controller
     {
         $projects = Project::all();
         $categories = Category::all();
+
         return view('default.index', [
             'projectlist' => $projects,
             'categories' => $categories
@@ -21,12 +22,14 @@ class DefaultController extends Controller
 
     public function category($category)
     {
-    	$category = Category::where('category', $category)
-    		->first();
-        $categories = Category::all();
+        $categories = Category::where('category', $category)-> first();
+        $projects = Project::where('category_id', $categories->id)->get();
+        $categories1 = Category::all();
+
+
         return view('default.index', [
-            'categories' => $categories,
-            'projectlist' => $category->projects
+            'projectlist' => $projects,
+            'categories' => $categories1
         ]);
     }
 }

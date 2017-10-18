@@ -13,13 +13,16 @@ use App\Models\Project;
 |
 */
 
-Route::get('/', "Frontend\DefaultController@index");
-Route::get('/category/{category}', 'Frontend\DefaultController@category');
+Route::get('/', 'Frontend\DefaultController@index');
+
 Auth::routes();
 
 Route::get('/dashboard', 'Backend\DashboardController@index');
 
 Route::resource('/dashboard/projects', 'Backend\ProjectsController');
+Route::resource('/dashboard/category', 'Backend\CategoryController');
+
+Route::get('/category/{category}', 'Frontend\DefaultController@category');
 
 Route::get('/test', function () {
 	$projects = Project::all();
